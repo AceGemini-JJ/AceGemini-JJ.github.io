@@ -1,210 +1,100 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🃏 記憶翻牌｜兒童遊戲</title>
-<style>
-  *{box-sizing:border-box}
-  body{
-    margin:0; min-height:100vh; font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
-    background:linear-gradient(180deg,#8fe4ff 0%,#d9f8ff 45%,#a9e87d 100%);
-    color:#4b351f; overflow-x:hidden;
-  }
-  .app{max-width:1100px;margin:auto;padding:18px}
-  header{
-    display:flex;align-items:center;justify-content:space-between;gap:12px;
-    background:#fff7df;border:4px solid #d18b2d;border-radius:24px;padding:14px 18px;
-    box-shadow:0 8px 0 #a96725;
-  }
-  .title h1{margin:0;font-size:clamp(28px,5vw,46px);color:#e67b22;text-shadow:2px 2px #fff}
-  .title p{margin:4px 0 0;font-size:16px;font-weight:700}
-  .home{
-    border:0;border-radius:18px;background:#49a8e8;color:white;font-size:18px;font-weight:900;
-    padding:12px 18px;cursor:pointer;box-shadow:0 5px 0 #2679b5;
-  }
-  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
-  .stat{background:#fff;border-radius:18px;padding:10px;text-align:center;border:3px solid #ffd27d;box-shadow:0 4px 0 #d99d4d}
-  .stat b{display:block;font-size:28px;color:#1976b8}
-  .stat span{font-weight:800}
-  .layout{display:grid;grid-template-columns:1fr 260px;gap:18px;align-items:start}
-  .board{
-    background:#f8dca8;border:5px solid #d39745;border-radius:26px;padding:18px;
-    box-shadow:0 8px 0 #b77832;
-  }
-  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-  .card{
-    aspect-ratio:1/1; border:0;background:transparent;padding:0;perspective:700px;cursor:pointer;
-  }
-  .card-inner{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
-  .card.flipped .card-inner,.card.matched .card-inner{transform:rotateY(180deg)}
-  .face{
-    position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;
-    display:flex;align-items:center;justify-content:center;
-    border:4px solid white;box-shadow:0 5px 0 rgba(80,60,30,.2);
-  }
-  .back{background:linear-gradient(135deg,#38a9ec,#1679c5);font-size:46px;color:#bdeaff}
-  .front{transform:rotateY(180deg);background:#fff8e8;font-size:clamp(38px,7vw,62px)}
-  .matched .front{background:#dff8c9;animation:pop .4s}
-  @keyframes pop{50%{transform:rotateY(180deg) scale(1.08)}}
-  aside{
-    background:#fff9e8;border:4px solid #d99b45;border-radius:24px;padding:18px;
-    box-shadow:0 7px 0 #b77b35;
-  }
-  aside h2{margin:0 0 12px;color:#b86a19}
-  ol{padding-left:28px;line-height:2;font-weight:700}
-  .restart{
-    width:100%;border:0;border-radius:18px;background:#f35b68;color:white;
-    padding:14px;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 5px 0 #c13e49;
-  }
-  .message{text-align:center;font-weight:900;font-size:20px;min-height:30px;margin:14px 0;color:#08783c}
-  .footer{
-    text-align:center;
-    margin:18px 0 4px;
-    color:#76522f;
-    font-size:15px;
-    font-weight:800;
-    letter-spacing:1px;
-    text-shadow:0 1px rgba(255,255,255,.8);
-  }
-  .modal{
-    position:fixed;inset:0;background:rgba(30,70,90,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:10
-  }
-  .modal.show{display:flex}
-  .dialog{
-    background:#fff8df;border:5px solid #e3a64f;border-radius:28px;padding:30px;text-align:center;
-    max-width:430px;width:100%;box-shadow:0 10px 0 #a86e2d;
-  }
-  .dialog h2{font-size:34px;margin:0 0 8px;color:#e97820}
-  .stars{font-size:42px;letter-spacing:5px;margin:12px}
-  .dialog p{font-size:18px;font-weight:700}
-  @media(max-width:760px){
-    .app{padding:10px}.layout{grid-template-columns:1fr}.cards{gap:9px}.board{padding:10px}
-    .title p{font-size:13px}.home{padding:9px 12px;font-size:15px}
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小遊戲大集合</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+        p {
+            font-size: 14px;
+            color: #718096;
+            margin-bottom: 30px;
+        }
+        .game-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .game-btn {
+            display: block;
+            padding: 16px 24px;
+            background: #4299e1;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 12px;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 10px rgba(66, 153, 225, 0.3);
+        }
+        .game-btn:hover {
+            background: #3182ce;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 18px rgba(66, 153, 225, 0.4);
+        }
+        .game-btn:active {
+            transform: translateY(-1px);
+        }
+        /* 暫時未開放的按鈕樣式 */
+        .game-btn.disabled {
+            background: #cbd5e0;
+            color: #718096;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .game-btn.disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+    </style>
 </head>
 <body>
-<div class="app">
-  <header>
-    <div class="title">
-      <h1>🃏 記憶翻牌</h1>
-      <p>找出相同的圖案，完成所有配對！</p>
+
+    <div class="container">
+        <h1>🎮 小遊戲大集合</h1>
+        <p>請選擇想遊玩的遊戲：</p>
+        
+        <div class="game-menu">
+            <!-- 第一個按鈕：連結至 記憶 2.html -->
+            <a href="記憶 2.html" class="game-btn">🧠 記憶遊戲 2</a>
+
+            <!-- 第二個按鈕：預留 (未來若有遊戲可將 href 改為檔案名稱，如 href="保齡球.html") -->
+            <a href="保齡球.html" class="game-btn">🎳 遊戲 2 (保齡球)</a>
+
+            <!-- 第三個按鈕：預留 (若尚未製作完成，可移除 href 或指向對應檔名) -->
+            <a href="記憶翻牌 3.html" class="game-btn">🃏 遊戲 3 (記憶翻牌 3)</a>
+        </div>
     </div>
-    <button class="home" onclick="alert('這是一個獨立遊戲，目前沒有設定首頁連結。')">🏠 首頁</button>
-  </header>
 
-  <div class="stats">
-    <div class="stat"><b id="score">0</b><span>⭐ 得分</span></div>
-    <div class="stat"><b id="moves">0</b><span>🃏 翻牌次數</span></div>
-    <div class="stat"><b id="progress">0 / 6</b><span>⭐ 完成進度</span></div>
-  </div>
-
-  <div class="layout">
-    <main class="board">
-      <div id="cards" class="cards"></div>
-      <div id="message" class="message">加油！找出第一組配對吧！</div>
-    </main>
-
-    <aside>
-      <h2>💡 遊戲說明</h2>
-      <ol>
-        <li>點擊卡牌翻開。</li>
-        <li>一次翻兩張。</li>
-        <li>找到相同圖案就配對成功。</li>
-        <li>完成全部配對就過關！</li>
-      </ol>
-      <button class="restart" onclick="startGame()">🔄 重新開始</button>
-    </aside>
-  </div>
-
-  <div class="footer">作者－超印J-J　｜　版本 1.0</div>
-</div>
-
-<div id="modal" class="modal">
-  <div class="dialog">
-    <h2>🎉 太厲害了！</h2>
-    <div id="stars" class="stars">⭐⭐⭐</div>
-    <p id="result"></p>
-    <button class="restart" onclick="closeModal();startGame()">再玩一次</button>
-  </div>
-</div>
-
-<script>
-const emojis = ["🐶","🐱","🐰","🦊","🐼","🐸"];
-let deck=[], first=null, second=null, lock=false, moves=0, matched=0, score=0;
-
-function shuffle(a){
-  for(let i=a.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
-  }
-  return a;
-}
-
-function startGame(){
-  deck=shuffle([...emojis,...emojis].map((emoji,i)=>({id:i,emoji,matched:false})));
-  first=null; second=null; lock=false; moves=0; matched=0; score=0;
-  document.getElementById("message").textContent="加油！找出第一組配對吧！";
-  updateStats();
-  const wrap=document.getElementById("cards");
-  wrap.innerHTML="";
-  deck.forEach((item,index)=>{
-    const btn=document.createElement("button");
-    btn.className="card";
-    btn.dataset.index=index;
-    btn.innerHTML=`<div class="card-inner">
-      <div class="face back">🐾</div>
-      <div class="face front">${item.emoji}</div>
-    </div>`;
-    btn.addEventListener("click",()=>flipCard(index,btn));
-    wrap.appendChild(btn);
-  });
-}
-
-function flipCard(index,btn){
-  if(lock || deck[index].matched || btn.classList.contains("flipped")) return;
-  btn.classList.add("flipped");
-  if(first===null){ first={index,btn}; return; }
-  second={index,btn}; moves++; lock=true; updateStats();
-
-  if(deck[first.index].emoji===deck[second.index].emoji){
-    deck[first.index].matched=true; deck[second.index].matched=true;
-    first.btn.classList.add("matched"); second.btn.classList.add("matched");
-    matched++; score+=100;
-    document.getElementById("message").textContent="✨ 配對成功！";
-    first=null; second=null; lock=false; updateStats();
-    if(matched===emojis.length) setTimeout(finishGame,500);
-  }else{
-    score=Math.max(0,score-10);
-    document.getElementById("message").textContent="再想想看！這兩張不一樣喔～";
-    setTimeout(()=>{
-      first.btn.classList.remove("flipped");
-      second.btn.classList.remove("flipped");
-      first=null; second=null; lock=false;
-      document.getElementById("message").textContent="繼續找下一組！";
-      updateStats();
-    },850);
-  }
-}
-
-function updateStats(){
-  document.getElementById("score").textContent=score;
-  document.getElementById("moves").textContent=moves;
-  document.getElementById("progress").textContent=`${matched} / ${emojis.length}`;
-}
-
-function finishGame(){
-  let stars=3;
-  if(moves>16) stars=2;
-  if(moves>22) stars=1;
-  document.getElementById("stars").textContent="⭐".repeat(stars);
-  document.getElementById("result").textContent=`你用了 ${moves} 次翻牌，得到 ${score} 分！`;
-  document.getElementById("modal").classList.add("show");
-}
-function closeModal(){document.getElementById("modal").classList.remove("show");}
-
-startGame();
-</script>
 </body>
 </html>
