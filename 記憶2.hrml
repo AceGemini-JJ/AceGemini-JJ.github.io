@@ -1,0 +1,3359 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<title>🃏 記憶翻牌 2.0</title>
+
+<style>
+
+/* =========================
+   基本
+========================= */
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  min-height:100%;
+
+  font-family:
+    "Noto Sans TC",
+    "Microsoft JhengHei",
+    sans-serif;
+
+  color:white;
+
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      #263c78 0%,
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 80% 30%,
+      #631f70 0%,
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #080b20,
+      #10152f 50%,
+      #080b20
+    );
+
+  overflow-x:hidden;
+}
+
+body{
+  min-height:100vh;
+}
+
+.hidden{
+  display:none!important;
+}
+
+
+/* =========================
+   背景光
+========================= */
+
+.bg-light{
+  position:fixed;
+
+  width:430px;
+  height:430px;
+
+  border-radius:50%;
+
+  filter:blur(90px);
+
+  opacity:.2;
+
+  pointer-events:none;
+
+  animation:bgMove 8s infinite alternate ease-in-out;
+}
+
+.bg1{
+  background:#00eaff;
+  top:-180px;
+  left:-150px;
+}
+
+.bg2{
+  background:#ff00ea;
+  right:-180px;
+  bottom:-150px;
+
+  animation-delay:2s;
+}
+
+@keyframes bgMove{
+
+  from{
+    transform:
+      translate(0,0)
+      scale(1);
+  }
+
+  to{
+    transform:
+      translate(80px,50px)
+      scale(1.3);
+  }
+
+}
+
+
+/* =========================
+   共用容器
+========================= */
+
+.screen{
+  width:100%;
+  max-width:1100px;
+
+  margin:auto;
+
+  padding:12px;
+
+  position:relative;
+  z-index:2;
+}
+
+h1{
+  margin:4px 0 4px;
+
+  text-align:center;
+
+  font-size:
+    clamp(26px,6vw,42px);
+
+  text-shadow:
+    0 0 8px #00eaff,
+    0 0 20px #008cff,
+    0 0 35px #ff00ea;
+}
+
+.subtitle{
+  text-align:center;
+
+  color:#b8c7ff;
+
+  font-size:13px;
+
+  margin-bottom:12px;
+}
+
+
+/* =========================
+   按鈕
+========================= */
+
+button{
+
+  border:0;
+
+  cursor:pointer;
+
+  color:white;
+
+  font-weight:900;
+
+  font-size:14px;
+
+  border-radius:13px;
+
+  padding:10px 14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #263d82,
+      #50228a
+    );
+
+  box-shadow:
+    0 4px 12px #0008,
+    inset 0 1px 1px #fff4;
+
+  transition:.15s;
+}
+
+button:active{
+  transform:scale(.93);
+}
+
+.home-btn{
+
+  position:absolute;
+
+  left:14px;
+  top:14px;
+
+  padding:8px 12px;
+
+  font-size:13px;
+}
+
+
+/* =========================
+   難度選擇
+========================= */
+
+#selectScreen{
+
+  min-height:100vh;
+
+  display:flex;
+
+  flex-direction:column;
+
+  justify-content:center;
+}
+
+.levels{
+
+  width:100%;
+
+  max-width:700px;
+
+  margin:auto;
+
+  display:grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:12px;
+}
+
+.level-card{
+
+  position:relative;
+
+  padding:16px 12px;
+
+  min-height:130px;
+
+  border-radius:20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.14),
+      rgba(255,255,255,.04)
+    );
+
+  border:
+    1px solid
+    rgba(255,255,255,.15);
+
+  box-shadow:
+    0 10px 25px #0007,
+    inset 0 0 20px #ffffff09;
+
+  overflow:hidden;
+
+  transition:.2s;
+}
+
+.level-card::before{
+
+  content:"";
+
+  position:absolute;
+
+  width:180%;
+
+  height:70px;
+
+  left:-40%;
+
+  top:45%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #fff5,
+      transparent
+    );
+
+  transform:rotate(-25deg);
+
+  animation:
+    levelLight 3s infinite;
+}
+
+@keyframes levelLight{
+
+  0%{
+    transform:
+      translateX(-70%)
+      rotate(-25deg);
+  }
+
+  100%{
+    transform:
+      translateX(70%)
+      rotate(-25deg);
+  }
+
+}
+
+.level-card:hover{
+
+  transform:
+    translateY(-4px)
+    scale(1.02);
+
+  box-shadow:
+    0 0 18px #00eaff66,
+    0 12px 30px #0009;
+}
+
+.level-title{
+
+  font-size:21px;
+
+  font-weight:1000;
+
+  position:relative;
+
+  z-index:1;
+}
+
+.level-info{
+
+  color:#cbd5ff;
+
+  margin:
+    5px 0 12px;
+
+  font-size:13px;
+
+  position:relative;
+
+  z-index:1;
+}
+
+.level-card button{
+
+  width:100%;
+
+  position:relative;
+
+  z-index:1;
+}
+
+
+/* =========================
+   遊戲頁
+========================= */
+
+#gameScreen{
+
+  padding-top:8px;
+
+  padding-bottom:5px;
+}
+
+.game-top{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:8px;
+
+  margin-bottom:6px;
+}
+
+.game-title{
+
+  font-size:21px;
+
+  font-weight:1000;
+
+  text-shadow:
+    0 0 12px #00eaff;
+}
+
+.game-buttons{
+
+  display:flex;
+
+  gap:5px;
+}
+
+.game-buttons button{
+
+  padding:
+    7px 9px;
+
+  font-size:12px;
+}
+
+
+/* =========================
+   分數
+========================= */
+
+.stats{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,1fr);
+
+  gap:6px;
+
+  margin-bottom:6px;
+}
+
+.stat{
+
+  min-width:0;
+
+  padding:5px 4px;
+
+  text-align:center;
+
+  border-radius:11px;
+
+  background:#ffffff0c;
+
+  border:
+    1px solid
+    #ffffff18;
+
+  box-shadow:
+    inset 0 0 12px
+    #ffffff06;
+}
+
+.stat-label{
+
+  font-size:10px;
+
+  color:#9da9d8;
+}
+
+.stat-value{
+
+  font-size:17px;
+
+  font-weight:1000;
+
+  line-height:20px;
+
+  text-shadow:
+    0 0 8px #00eaff;
+}
+
+
+/* =========================
+   卡牌
+========================= */
+
+#game{
+
+  width:100%;
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(6,1fr);
+
+  gap:6px;
+
+  max-height:
+    calc(100vh - 160px);
+}
+
+.card{
+
+  position:relative;
+
+  aspect-ratio:1/1;
+
+  perspective:1000px;
+
+  cursor:pointer;
+}
+
+.card-inner{
+
+  width:100%;
+  height:100%;
+
+  position:relative;
+
+  transform-style:preserve-3d;
+
+  transition:
+    transform
+    .38s
+    cubic-bezier(
+      .2,
+      .75,
+      .25,
+      1
+    );
+}
+
+.card.flipped .card-inner,
+.card.matched .card-inner{
+
+  transform:
+    rotateY(180deg);
+}
+
+.face{
+
+  position:absolute;
+
+  inset:0;
+
+  border-radius:13px;
+
+  backface-visibility:hidden;
+
+  -webkit-backface-visibility:hidden;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  overflow:hidden;
+}
+
+
+/* =========================
+   卡背
+========================= */
+
+.back{
+
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      #314ca0,
+      #141d52 60%,
+      #090d27
+    );
+
+  border:
+    1px solid
+    #5c7bff99;
+
+  box-shadow:
+    inset 0 0 15px #6b8cff44,
+    0 0 8px #315cff33;
+}
+
+.back::before{
+
+  content:"✦";
+
+  font-size:
+    clamp(20px,4vw,32px);
+
+  color:#72edff;
+
+  text-shadow:
+    0 0 7px #00eaff,
+    0 0 20px #008cff;
+
+  animation:
+    starPulse 1.4s infinite;
+}
+
+.back::after{
+
+  content:"";
+
+  position:absolute;
+
+  width:200%;
+
+  height:25%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #fff9,
+      transparent
+    );
+
+  transform:rotate(-35deg);
+
+  animation:
+    sweep 2.4s infinite;
+}
+
+@keyframes sweep{
+
+  from{
+    left:-150%;
+  }
+
+  to{
+    left:150%;
+  }
+
+}
+
+@keyframes starPulse{
+
+  50%{
+
+    transform:
+      scale(1.25)
+      rotate(15deg);
+
+    filter:brightness(1.8);
+  }
+
+}
+
+
+/* =========================
+   卡面
+========================= */
+
+.front{
+
+  transform:
+    rotateY(180deg);
+
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      #ffffff,
+      #dbe7ff 55%,
+      #9cb8ff
+    );
+
+  border:
+    2px solid #fff;
+
+  box-shadow:
+    0 0 8px #00eaff,
+    0 0 18px #008cff,
+    inset 0 0 20px #fff;
+
+  font-size:
+    clamp(25px,5vw,48px);
+}
+
+.front::after{
+
+  content:"";
+
+  position:absolute;
+
+  inset:-100%;
+
+  background:
+    linear-gradient(
+      45deg,
+      transparent 35%,
+      #fff 48%,
+      transparent 60%
+    );
+
+  opacity:.8;
+
+  transform:rotate(20deg);
+
+  animation:
+    cardShine .65s ease;
+}
+
+@keyframes cardShine{
+
+  from{
+    transform:
+      translate(-50%,-50%)
+      rotate(20deg);
+  }
+
+  to{
+    transform:
+      translate(50%,50%)
+      rotate(20deg);
+  }
+
+}
+
+
+/* =========================
+   翻牌爆光
+========================= */
+
+.card.flipped .front{
+
+  animation:
+    flipFlash .5s ease;
+}
+
+@keyframes flipFlash{
+
+  0%{
+
+    filter:brightness(1);
+
+    box-shadow:
+      0 0 8px #00eaff;
+  }
+
+  35%{
+
+    filter:brightness(2.3);
+
+    box-shadow:
+      0 0 12px #fff,
+      0 0 30px #00eaff,
+      0 0 50px #008cff;
+  }
+
+  100%{
+
+    filter:brightness(1);
+  }
+
+}
+
+
+/* =========================
+   配對成功
+========================= */
+
+.card.matched{
+
+  animation:
+    matchCard .7s ease;
+
+  z-index:5;
+}
+
+.card.matched .front{
+
+  background:
+    radial-gradient(
+      circle,
+      #fff,
+      #fff8a6 40%,
+      #ffc400 75%
+    );
+
+  border-color:#fff;
+
+  box-shadow:
+    0 0 10px #fff,
+    0 0 25px #ffd000,
+    0 0 55px #ff8c00,
+    inset 0 0 25px #fff;
+
+  animation:
+    perfectFlash .8s ease;
+}
+
+@keyframes perfectFlash{
+
+  0%{
+
+    filter:brightness(1);
+
+    transform:
+      rotateY(180deg)
+      scale(1);
+  }
+
+  25%{
+
+    filter:brightness(2.8);
+
+    transform:
+      rotateY(180deg)
+      scale(1.15);
+  }
+
+  55%{
+
+    filter:brightness(1.5);
+
+    transform:
+      rotateY(180deg)
+      scale(1.08);
+  }
+
+  100%{
+
+    filter:brightness(1);
+
+    transform:
+      rotateY(180deg)
+      scale(1);
+  }
+
+}
+
+@keyframes matchCard{
+
+  0%{
+    transform:scale(1);
+  }
+
+  30%{
+    transform:
+      scale(1.12)
+      rotate(-2deg);
+  }
+
+  55%{
+    transform:
+      scale(.96)
+      rotate(2deg);
+  }
+
+  100%{
+    transform:scale(1);
+  }
+
+}
+
+
+/* =========================
+   翻錯
+========================= */
+
+.card.wrong{
+
+  animation:
+    wrongShake .42s ease;
+}
+
+.card.wrong .front{
+
+  background:
+    radial-gradient(
+      circle,
+      #fff,
+      #ffb0b0 45%,
+      #ff304f 85%
+    );
+
+  box-shadow:
+    0 0 10px #ff1744,
+    0 0 25px #ff1744,
+    0 0 45px #ff002f,
+    inset 0 0 20px #ff1744;
+
+  animation:
+    wrongFlash .25s
+    infinite alternate;
+}
+
+@keyframes wrongFlash{
+
+  from{
+    filter:brightness(1);
+  }
+
+  to{
+    filter:brightness(1.8);
+  }
+
+}
+
+@keyframes wrongShake{
+
+  0%,100%{
+    transform:translateX(0);
+  }
+
+  20%{
+    transform:translateX(-8px);
+  }
+
+  40%{
+    transform:translateX(8px);
+  }
+
+  60%{
+    transform:translateX(-6px);
+  }
+
+  80%{
+    transform:translateX(6px);
+  }
+
+}
+
+
+/* =========================
+   粒子
+========================= */
+
+#fx{
+
+  position:fixed;
+
+  inset:0;
+
+  pointer-events:none;
+
+  overflow:hidden;
+
+  z-index:50;
+}
+
+.spark{
+
+  position:absolute;
+
+  width:7px;
+  height:7px;
+
+  border-radius:50%;
+
+  background:white;
+
+  box-shadow:
+    0 0 7px #fff,
+    0 0 18px #00eaff;
+
+  animation:
+    sparkFly .8s
+    ease-out
+    forwards;
+}
+
+@keyframes sparkFly{
+
+  from{
+
+    transform:
+      translate(0,0)
+      scale(1);
+
+    opacity:1;
+  }
+
+  to{
+
+    transform:
+      translate(
+        var(--x),
+        var(--y)
+      )
+      scale(0);
+
+    opacity:0;
+  }
+
+}
+
+.ring{
+
+  position:absolute;
+
+  width:30px;
+  height:30px;
+
+  border:
+    4px solid #fff;
+
+  border-radius:50%;
+
+  transform:
+    translate(-50%,-50%);
+
+  animation:
+    ringBoom .7s
+    ease-out
+    forwards;
+
+  box-shadow:
+    0 0 10px #fff,
+    0 0 30px #00eaff;
+}
+
+@keyframes ringBoom{
+
+  from{
+
+    opacity:1;
+
+    transform:
+      translate(-50%,-50%)
+      scale(.3);
+  }
+
+  to{
+
+    opacity:0;
+
+    transform:
+      translate(-50%,-50%)
+      scale(6);
+  }
+
+}
+
+
+/* =========================
+   全螢幕閃光
+========================= */
+
+.flash{
+
+  position:fixed;
+
+  inset:0;
+
+  background:#fff;
+
+  pointer-events:none;
+
+  z-index:100;
+
+  animation:
+    screenFlash .25s
+    ease-out
+    forwards;
+}
+
+@keyframes screenFlash{
+
+  from{
+    opacity:.45;
+  }
+
+  to{
+    opacity:0;
+  }
+
+}
+
+
+/* =========================
+   Combo文字
+========================= */
+
+#toast{
+
+  position:fixed;
+
+  left:50%;
+  top:48%;
+
+  transform:
+    translate(-50%,-50%)
+    scale(.5);
+
+  opacity:0;
+
+  z-index:90;
+
+  pointer-events:none;
+
+  font-size:
+    clamp(25px,8vw,58px);
+
+  font-weight:1000;
+
+  text-align:center;
+
+  white-space:nowrap;
+
+  text-shadow:
+    0 0 8px #fff,
+    0 0 20px #00eaff,
+    0 0 40px #ff00ea;
+}
+
+#toast.show{
+
+  animation:
+    toastBoom .9s
+    ease
+    forwards;
+}
+
+@keyframes toastBoom{
+
+  0%{
+
+    opacity:0;
+
+    transform:
+      translate(-50%,-50%)
+      scale(.3)
+      rotate(-8deg);
+  }
+
+  25%{
+
+    opacity:1;
+
+    transform:
+      translate(-50%,-50%)
+      scale(1.25)
+      rotate(3deg);
+  }
+
+  55%{
+
+    opacity:1;
+
+    transform:
+      translate(-50%,-50%)
+      scale(1);
+  }
+
+  100%{
+
+    opacity:0;
+
+    transform:
+      translate(-50%,-65%)
+      scale(1.1);
+  }
+
+}
+
+
+/* =========================
+   完成視窗
+========================= */
+
+#modal{
+
+  position:fixed;
+
+  inset:0;
+
+  background:#02040dcc;
+
+  backdrop-filter:blur(8px);
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  z-index:80;
+
+  padding:18px;
+}
+
+.result-box{
+
+  width:min(
+    430px,
+    95vw
+  );
+
+  padding:
+    25px 20px;
+
+  border-radius:25px;
+
+  text-align:center;
+
+  background:
+    linear-gradient(
+      145deg,
+      #19265a,
+      #29164c
+    );
+
+  border:
+    1px solid
+    #ffffff30;
+
+  box-shadow:
+    0 0 30px #00eaff55,
+    0 0 70px #ff00ea33;
+
+  animation:
+    resultIn
+    .45s
+    cubic-bezier(
+      .2,
+      1.5,
+      .3,
+      1
+    );
+}
+
+@keyframes resultIn{
+
+  from{
+
+    transform:
+      scale(.4)
+      rotate(-8deg);
+
+    opacity:0;
+  }
+
+  to{
+
+    transform:
+      scale(1)
+      rotate(0);
+
+    opacity:1;
+  }
+
+}
+
+.result-title{
+
+  font-size:32px;
+
+  font-weight:1000;
+
+  text-shadow:
+    0 0 10px #ffd000,
+    0 0 25px #ff00ea;
+}
+
+.result-score{
+
+  font-size:45px;
+
+  font-weight:1000;
+
+  margin:8px;
+
+  text-shadow:
+    0 0 10px #00eaff,
+    0 0 30px #008cff;
+}
+
+.result-info{
+
+  color:#cbd4ff;
+
+  line-height:1.8;
+
+  margin-bottom:14px;
+}
+
+.result-buttons{
+
+  display:flex;
+
+  gap:8px;
+}
+
+.result-buttons button{
+
+  flex:1;
+}
+
+
+/* =========================
+   Footer
+========================= */
+
+.footer{
+
+  text-align:center;
+
+  font-size:11px;
+
+  color:#7e8bb8;
+
+  padding:
+    5px 0 2px;
+}
+
+
+/* =========================
+   平板 / 手機
+========================= */
+
+@media(max-width:760px){
+
+  .screen{
+    padding:9px;
+  }
+
+  #selectScreen{
+
+    justify-content:flex-start;
+
+    padding-top:38px;
+  }
+
+  h1{
+    margin-top:8px;
+  }
+
+  .home-btn{
+
+    position:relative;
+
+    left:auto;
+    top:auto;
+
+    align-self:flex-start;
+
+    margin-bottom:8px;
+  }
+
+  .levels{
+
+    gap:8px;
+  }
+
+  .level-card{
+
+    min-height:108px;
+
+    padding:
+      11px 9px;
+  }
+
+  .level-title{
+    font-size:18px;
+  }
+
+  .level-info{
+
+    font-size:11px;
+
+    margin:
+      3px 0 7px;
+  }
+
+  .level-card button{
+
+    padding:7px;
+
+    font-size:12px;
+  }
+
+  .game-top{
+
+    margin-bottom:5px;
+  }
+
+  .game-title{
+    font-size:18px;
+  }
+
+  .game-buttons button{
+
+    font-size:10px;
+
+    padding:
+      6px 7px;
+  }
+
+  .stats{
+
+    gap:4px;
+
+    margin-bottom:5px;
+  }
+
+  .stat{
+
+    padding:4px 2px;
+  }
+
+  .stat-label{
+    font-size:9px;
+  }
+
+  .stat-value{
+    font-size:14px;
+  }
+
+  #game{
+
+    grid-template-columns:
+      repeat(4,1fr);
+
+    gap:5px;
+
+    max-height:none;
+  }
+
+  .face{
+    border-radius:9px;
+  }
+
+  .footer{
+    display:none;
+  }
+
+}
+
+
+/* =========================
+   小手機
+========================= */
+
+@media(max-width:430px){
+
+  #selectScreen{
+    padding-top:24px;
+  }
+
+  h1{
+    font-size:27px;
+  }
+
+  .subtitle{
+    margin-bottom:8px;
+  }
+
+  .levels{
+    gap:7px;
+  }
+
+  .level-card{
+
+    min-height:100px;
+
+    border-radius:15px;
+  }
+
+  .level-title{
+    font-size:16px;
+  }
+
+  .level-info{
+    font-size:10px;
+  }
+
+  .game-top{
+    flex-wrap:wrap;
+  }
+
+  .game-buttons{
+    width:100%;
+  }
+
+  .game-buttons button{
+    flex:1;
+  }
+
+  #game{
+
+    grid-template-columns:
+      repeat(4,1fr);
+
+    gap:4px;
+  }
+
+}
+
+
+/* =========================
+   超小螢幕
+========================= */
+
+@media(max-height:700px){
+
+  #game{
+    gap:4px;
+  }
+
+  .stats{
+    margin-bottom:4px;
+  }
+
+  .stat{
+    padding:3px;
+  }
+
+  .stat-value{
+    font-size:13px;
+  }
+
+  .game-buttons button{
+    padding:
+      5px 6px;
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="bg-light bg1"></div>
+<div class="bg-light bg2"></div>
+
+<div id="fx"></div>
+
+<div id="toast"></div>
+
+
+<!-- =========================
+     難度選擇
+========================= -->
+
+<section
+  id="selectScreen"
+  class="screen"
+>
+
+  <button
+    class="home-btn"
+    onclick="location.href='index.html'"
+  >
+    🏠 首頁
+  </button>
+
+
+  <h1>
+    🃏 記憶翻牌
+  </h1>
+
+
+  <div class="subtitle">
+    選擇難度開始遊戲
+  </div>
+
+
+  <div class="levels">
+
+
+    <div class="level-card">
+
+      <div class="level-title">
+        🟢 初級 ×1
+      </div>
+
+      <div class="level-info">
+        6 對｜12 張｜不限時
+      </div>
+
+      <button
+        onclick="startGame('easy')"
+      >
+        開始遊戲
+      </button>
+
+    </div>
+
+
+    <div class="level-card">
+
+      <div class="level-title">
+        🔵 中級 ×2
+      </div>
+
+      <div class="level-info">
+        12 對｜24 張｜3 分鐘
+      </div>
+
+      <button
+        onclick="startGame('normal')"
+      >
+        開始遊戲
+      </button>
+
+    </div>
+
+
+    <div class="level-card">
+
+      <div class="level-title">
+        🟠 高級 ×4
+      </div>
+
+      <div class="level-info">
+        18 對｜36 張｜2:30
+      </div>
+
+      <button
+        onclick="startGame('hard')"
+      >
+        開始遊戲
+      </button>
+
+    </div>
+
+
+    <div class="level-card">
+
+      <div class="level-title">
+        🔴 專業 ×8
+      </div>
+
+      <div class="level-info">
+        24 對｜48 張｜2 分鐘
+      </div>
+
+      <button
+        onclick="startGame('pro')"
+      >
+        開始遊戲
+      </button>
+
+    </div>
+
+
+  </div>
+
+
+  <div class="footer">
+    作者－超印J-J｜版本 2.0
+  </div>
+
+</section>
+
+
+
+<!-- =========================
+     遊戲
+========================= -->
+
+<section
+  id="gameScreen"
+  class="screen hidden"
+>
+
+
+  <div class="game-top">
+
+
+    <div
+      class="game-title"
+      id="levelName"
+    >
+      🃏 記憶翻牌
+    </div>
+
+
+    <div class="game-buttons">
+
+      <button
+        id="musicBtn"
+        onclick="toggleMusic()"
+      >
+        🎵 音樂：關
+      </button>
+
+
+      <button
+        id="soundBtn"
+        onclick="toggleSound()"
+      >
+        🔊 音效：開
+      </button>
+
+
+      <button
+        onclick="restartGame()"
+      >
+        🔄
+      </button>
+
+
+      <button
+        onclick="chooseLevel()"
+      >
+        ↩️
+      </button>
+
+    </div>
+
+
+  </div>
+
+
+
+  <div class="stats">
+
+
+    <div class="stat">
+
+      <div class="stat-label">
+        分數
+      </div>
+
+      <div
+        class="stat-value"
+        id="score"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div class="stat-label">
+        步數
+      </div>
+
+      <div
+        class="stat-value"
+        id="moves"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div class="stat-label">
+        Combo
+      </div>
+
+      <div
+        class="stat-value"
+        id="combo"
+      >
+        0
+      </div>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div class="stat-label">
+        時間
+      </div>
+
+      <div
+        class="stat-value"
+        id="timer"
+      >
+        ∞
+      </div>
+
+    </div>
+
+
+  </div>
+
+
+
+  <div id="game"></div>
+
+
+  <div class="footer">
+    作者－超印J-J｜版本 2.0
+  </div>
+
+</section>
+
+
+
+<!-- =========================
+     完成視窗
+========================= -->
+
+<div
+  id="modal"
+  class="hidden"
+>
+
+
+  <div class="result-box">
+
+
+    <div class="result-title">
+      🎉 PERFECT CLEAR!
+    </div>
+
+
+    <div
+      class="result-score"
+      id="finalScore"
+    >
+      0
+    </div>
+
+
+    <div
+      class="result-info"
+      id="resultInfo"
+    >
+    </div>
+
+
+    <div class="result-buttons">
+
+      <button
+        onclick="restartGame()"
+      >
+        🔄 再玩一次
+      </button>
+
+
+      <button
+        onclick="chooseLevel()"
+      >
+        🎯 選擇難度
+      </button>
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+
+/* =========================
+   難度
+========================= */
+
+const levels={
+
+  easy:{
+    name:"🟢 初級 ×1",
+    pairs:6,
+    multiplier:1,
+    time:0,
+    penalty:10,
+    reward:100
+  },
+
+  normal:{
+    name:"🔵 中級 ×2",
+    pairs:12,
+    multiplier:2,
+    time:180,
+    penalty:20,
+    reward:200
+  },
+
+  hard:{
+    name:"🟠 高級 ×4",
+    pairs:18,
+    multiplier:4,
+    time:150,
+    penalty:40,
+    reward:400
+  },
+
+  pro:{
+    name:"🔴 專業 ×8",
+    pairs:24,
+    multiplier:8,
+    time:120,
+    penalty:80,
+    reward:800
+  }
+
+};
+
+
+/* =========================
+   圖案
+========================= */
+
+const emojis=[
+
+  "🐶","🐱","🐰","🦊",
+  "🐼","🐸","🐵","🐯",
+  "🦁","🐨","🐷","🐮",
+  "🐹","🐻","🐙","🦄",
+  "🐝","🦋","🐳","🐬",
+  "🦖","🦕","🍎","🍉"
+
+];
+
+
+/* =========================
+   遊戲狀態
+========================= */
+
+let currentLevel=null;
+
+let cards=[];
+
+let first=null;
+let second=null;
+
+let lock=false;
+
+let moves=0;
+let matches=0;
+
+let score=0;
+let combo=0;
+
+let timeLeft=0;
+
+let timerInterval=null;
+
+
+/* =========================
+   音效狀態
+========================= */
+
+let audio=null;
+
+let music=false;
+
+let sound=true;
+
+let musicTimer=null;
+
+let musicStep=0;
+
+
+/* =========================
+   Audio
+========================= */
+
+function getAudio(){
+
+  if(!audio){
+
+    audio=
+      new(
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+
+  }
+
+  if(audio.state==="suspended"){
+    audio.resume();
+  }
+
+  return audio;
+
+}
+
+
+function tone(
+  freq,
+  duration,
+  type="sine",
+  volume=.18
+){
+
+  if(!sound)return;
+
+  const a=getAudio();
+
+  const osc=
+    a.createOscillator();
+
+  const gain=
+    a.createGain();
+
+  osc.type=type;
+
+  osc.frequency.value=freq;
+
+  gain.gain.setValueAtTime(
+    volume,
+    a.currentTime
+  );
+
+  gain.gain.exponentialRampToValueAtTime(
+    .001,
+    a.currentTime+duration
+  );
+
+  osc.connect(gain);
+
+  gain.connect(a.destination);
+
+  osc.start();
+
+  osc.stop(
+    a.currentTime+duration
+  );
+
+}
+
+
+/* =========================
+   翻牌音
+========================= */
+
+function flipSound(){
+
+  tone(
+    520,
+    .08,
+    "triangle",
+    .28
+  );
+
+  setTimeout(()=>{
+
+    tone(
+      720,
+      .07,
+      "triangle",
+      .22
+    );
+
+  },45);
+
+}
+
+
+/* =========================
+   配對音
+========================= */
+
+function matchSound(){
+
+  tone(
+    620,
+    .12,
+    "sine",
+    .38
+  );
+
+  setTimeout(()=>{
+
+    tone(
+      880,
+      .13,
+      "sine",
+      .4
+    );
+
+  },80);
+
+  setTimeout(()=>{
+
+    tone(
+      1175,
+      .22,
+      "sine",
+      .42
+    );
+
+  },160);
+
+}
+
+
+/* =========================
+   錯誤音
+========================= */
+
+function wrongSound(){
+
+  tone(
+    180,
+    .18,
+    "sawtooth",
+    .27
+  );
+
+  setTimeout(()=>{
+
+    tone(
+      120,
+      .18,
+      "sawtooth",
+      .22
+    );
+
+  },100);
+
+}
+
+
+/* =========================
+   完成音
+========================= */
+
+function finishSound(){
+
+  const notes=[
+    523,
+    659,
+    784,
+    1046,
+    1318,
+    1568
+  ];
+
+  notes.forEach(
+    (n,i)=>{
+
+      setTimeout(()=>{
+
+        tone(
+          n,
+          .22,
+          "sine",
+          .42
+        );
+
+      },i*100);
+
+    }
+  );
+
+}
+
+
+/* =========================
+   背景音樂
+========================= */
+
+function musicNote(){
+
+  if(!music)return;
+
+  const melody=[
+
+    523,659,784,659,
+    698,880,1046,880,
+    784,988,1175,988,
+    659,784,988,784
+
+  ];
+
+  const freq=
+    melody[
+      musicStep%
+      melody.length
+    ];
+
+  const a=getAudio();
+
+  const osc=
+    a.createOscillator();
+
+  const gain=
+    a.createGain();
+
+  osc.type="triangle";
+
+  osc.frequency.value=freq;
+
+  gain.gain.setValueAtTime(
+    .11,
+    a.currentTime
+  );
+
+  gain.gain.exponentialRampToValueAtTime(
+    .001,
+    a.currentTime+.27
+  );
+
+  osc.connect(gain);
+
+  gain.connect(a.destination);
+
+  osc.start();
+
+  osc.stop(
+    a.currentTime+.27
+  );
+
+  musicStep++;
+
+}
+
+
+function toggleMusic(){
+
+  music=!music;
+
+  const btn=
+    document.getElementById(
+      "musicBtn"
+    );
+
+  btn.textContent=
+    music
+    ? "🎵 音樂：開"
+    : "🎵 音樂：關";
+
+
+  if(music){
+
+    getAudio();
+
+    musicNote();
+
+    clearInterval(
+      musicTimer
+    );
+
+    musicTimer=
+      setInterval(
+        musicNote,
+        300
+      );
+
+  }else{
+
+    clearInterval(
+      musicTimer
+    );
+
+  }
+
+}
+
+
+function toggleSound(){
+
+  sound=!sound;
+
+  document.getElementById(
+    "soundBtn"
+  ).textContent=
+    sound
+    ? "🔊 音效：開"
+    : "🔇 音效：關";
+
+}
+
+
+/* =========================
+   開始
+========================= */
+
+function startGame(level){
+
+  currentLevel=
+    levels[level];
+
+  document.getElementById(
+    "selectScreen"
+  ).classList.add("hidden");
+
+  document.getElementById(
+    "gameScreen"
+  ).classList.remove("hidden");
+
+  document.getElementById(
+    "modal"
+  ).classList.add("hidden");
+
+  document.getElementById(
+    "levelName"
+  ).textContent=
+    currentLevel.name;
+
+  restartGame();
+
+}
+
+
+/* =========================
+   建立卡牌
+========================= */
+
+function buildCards(){
+
+  cards=[];
+
+  const selected=
+    emojis.slice(
+      0,
+      currentLevel.pairs
+    );
+
+
+  selected.forEach(
+    (emoji,i)=>{
+
+      cards.push({
+        id:i,
+        emoji:emoji
+      });
+
+      cards.push({
+        id:i,
+        emoji:emoji
+      });
+
+    }
+  );
+
+
+  cards.sort(
+    ()=>Math.random()-.5
+  );
+
+}
+
+
+/* =========================
+   顯示卡牌
+========================= */
+
+function renderCards(){
+
+  const game=
+    document.getElementById(
+      "game"
+    );
+
+  game.innerHTML="";
+
+
+  cards.forEach(
+    (item,index)=>{
+
+      const card=
+        document.createElement(
+          "div"
+        );
+
+      card.className="card";
+
+      card.dataset.index=index;
+
+
+      card.innerHTML=`
+
+        <div class="card-inner">
+
+          <div class="face back"></div>
+
+          <div class="face front">
+            ${item.emoji}
+          </div>
+
+        </div>
+
+      `;
+
+
+      card.onclick=()=>{
+
+        flip(
+          card,
+          index
+        );
+
+      };
+
+
+      game.appendChild(card);
+
+    }
+  );
+
+}
+
+
+/* =========================
+   翻牌
+========================= */
+
+function flip(card,index){
+
+  /*
+    鎖定期間：
+    不允許玩家再翻牌
+  */
+
+  if(lock){
+    return;
+  }
+
+
+  /*
+    已翻開 / 已配對
+  */
+
+  if(
+    card.classList.contains(
+      "flipped"
+    ) ||
+    card.classList.contains(
+      "matched"
+    )
+  ){
+    return;
+  }
+
+
+  /*
+    第一張
+  */
+
+  if(!first){
+
+    first={
+      card:card,
+      index:index
+    };
+
+    card.classList.add(
+      "flipped"
+    );
+
+    flipSound();
+
+    return;
+  }
+
+
+  /*
+    第二張
+  */
+
+  if(
+    first.index===index
+  ){
+    return;
+  }
+
+
+  second={
+    card:card,
+    index:index
+  };
+
+
+  card.classList.add(
+    "flipped"
+  );
+
+
+  flipSound();
+
+
+  moves++;
+
+
+  updateUI();
+
+
+  /*
+    鎖定。
+    第二張翻開後，
+    一直到判定完成前
+    都不能再點其他牌。
+  */
+
+  lock=true;
+
+
+  setTimeout(
+    checkMatch,
+    430
+  );
+
+}
+
+
+/* =========================
+   判斷配對
+========================= */
+
+function checkMatch(){
+
+  /*
+    保護：
+    如果狀態不存在就直接解除鎖定
+  */
+
+  if(
+    !first ||
+    !second
+  ){
+
+    lock=false;
+
+    return;
+  }
+
+
+  const a=
+    cards[first.index];
+
+  const b=
+    cards[second.index];
+
+
+  /* =====================
+     配對成功
+  ===================== */
+
+  if(a.id===b.id){
+
+    first.card.classList.add(
+      "matched"
+    );
+
+    second.card.classList.add(
+      "matched"
+    );
+
+
+    matches++;
+
+    combo++;
+
+
+    score +=
+      currentLevel.reward *
+      currentLevel.multiplier *
+      Math.max(
+        combo,
+        1
+      );
+
+
+    matchSound();
+
+
+    matchEffect(
+      second.card
+    );
+
+
+    if(combo>=5){
+
+      showToast(
+        "🔥 ULTRA COMBO!"
+      );
+
+    }
+    else if(combo>=3){
+
+      showToast(
+        "✨ AWESOME COMBO!"
+      );
+
+    }
+    else{
+
+      showToast(
+        "✨ PERFECT!"
+      );
+
+    }
+
+
+    /*
+      成功：
+      清空目前牌組
+      可以繼續翻
+    */
+
+    first=null;
+
+    second=null;
+
+    lock=false;
+
+
+    updateUI();
+
+
+    /*
+      全部完成
+    */
+
+    if(
+      matches===
+      currentLevel.pairs
+    ){
+
+      setTimeout(
+        finish,
+        700
+      );
+
+    }
+
+
+  }
+
+
+  /* =====================
+     配對失敗
+  ===================== */
+
+  else{
+
+    /*
+      紅色震動
+    */
+
+    first.card.classList.add(
+      "wrong"
+    );
+
+    second.card.classList.add(
+      "wrong"
+    );
+
+
+    combo=0;
+
+
+    score=
+      Math.max(
+        0,
+        score-
+        currentLevel.penalty
+      );
+
+
+    wrongSound();
+
+
+    updateUI();
+
+
+    /*
+      非常重要：
+      這裡不能馬上
+      lock=false。
+
+      必須等兩張牌
+      翻回去以後
+      才解除鎖定。
+    */
+
+    setTimeout(()=>{
+
+
+      /*
+        一起翻回去
+      */
+
+      first.card.classList.remove(
+        "flipped",
+        "wrong"
+      );
+
+      second.card.classList.remove(
+        "flipped",
+        "wrong"
+      );
+
+
+      /*
+        清除目前牌
+      */
+
+      first=null;
+
+      second=null;
+
+
+      /*
+        現在才允許
+        玩家翻下一組
+      */
+
+      lock=false;
+
+
+      updateUI();
+
+
+    },600);
+
+  }
+
+}
+
+
+/* =========================
+   配對特效
+========================= */
+
+function matchEffect(card){
+
+  if(!card)return;
+
+
+  const rect=
+    card.getBoundingClientRect();
+
+
+  const x=
+    rect.left+
+    rect.width/2;
+
+
+  const y=
+    rect.top+
+    rect.height/2;
+
+
+  /*
+    全螢幕閃光
+  */
+
+  const flash=
+    document.createElement(
+      "div"
+    );
+
+  flash.className="flash";
+
+  document.body.appendChild(
+    flash
+  );
+
+
+  setTimeout(
+    ()=>{
+      flash.remove();
+    },
+    300
+  );
+
+
+  /*
+    三層光圈
+  */
+
+  for(
+    let i=0;
+    i<3;
+    i++
+  ){
+
+    setTimeout(()=>{
+
+      const ring=
+        document.createElement(
+          "div"
+        );
+
+      ring.className="ring";
+
+      ring.style.left=
+        x+"px";
+
+      ring.style.top=
+        y+"px";
+
+
+      document.getElementById(
+        "fx"
+      ).appendChild(
+        ring
+      );
+
+
+      setTimeout(
+        ()=>{
+          ring.remove();
+        },
+        800
+      );
+
+
+    },i*100);
+
+  }
+
+
+  /*
+    35顆彩色粒子
+  */
+
+  const colors=[
+    "#fff",
+    "#00eaff",
+    "#ff00ea",
+    "#ffd000",
+    "#72ff72"
+  ];
+
+
+  for(
+    let i=0;
+    i<35;
+    i++
+  ){
+
+    const p=
+      document.createElement(
+        "div"
+      );
+
+    p.className="spark";
+
+
+    p.style.left=
+      x+"px";
+
+    p.style.top=
+      y+"px";
+
+
+    const color=
+      colors[
+        Math.floor(
+          Math.random()*
+          colors.length
+        )
+      ];
+
+
+    p.style.background=
+      color;
+
+
+    p.style.boxShadow=
+      `0 0 8px ${color}`;
+
+
+    const angle=
+      Math.random()*
+      Math.PI*2;
+
+
+    const distance=
+      50+
+      Math.random()*170;
+
+
+    p.style.setProperty(
+      "--x",
+      Math.cos(angle)*
+      distance+
+      "px"
+    );
+
+
+    p.style.setProperty(
+      "--y",
+      Math.sin(angle)*
+      distance+
+      "px"
+    );
+
+
+    document.getElementById(
+      "fx"
+    ).appendChild(
+      p
+    );
+
+
+    setTimeout(
+      ()=>{
+        p.remove();
+      },
+      900
+    );
+
+  }
+
+}
+
+
+/* =========================
+   Toast
+========================= */
+
+function showToast(text){
+
+  const toast=
+    document.getElementById(
+      "toast"
+    );
+
+
+  toast.textContent=text;
+
+
+  toast.classList.remove(
+    "show"
+  );
+
+
+  void toast.offsetWidth;
+
+
+  toast.classList.add(
+    "show"
+  );
+
+}
+
+
+/* =========================
+   UI
+========================= */
+
+function updateUI(){
+
+  document.getElementById(
+    "score"
+  ).textContent=
+    score;
+
+
+  document.getElementById(
+    "moves"
+  ).textContent=
+    moves;
+
+
+  document.getElementById(
+    "combo"
+  ).textContent=
+    combo;
+
+
+  document.getElementById(
+    "timer"
+  ).textContent=
+    currentLevel.time===0
+    ? "∞"
+    : formatTime(
+        timeLeft
+      );
+
+}
+
+
+/* =========================
+   時間
+========================= */
+
+function formatTime(sec){
+
+  const m=
+    Math.floor(
+      sec/60
+    )
+    .toString()
+    .padStart(2,"0");
+
+
+  const s=
+    (
+      sec%60
+    )
+    .toString()
+    .padStart(2,"0");
+
+
+  return `${m}:${s}`;
+
+}
+
+
+function startTimer(){
+
+  clearInterval(
+    timerInterval
+  );
+
+
+  if(
+    currentLevel.time===0
+  ){
+
+    timeLeft=0;
+
+    updateUI();
+
+    return;
+
+  }
+
+
+  timeLeft=
+    currentLevel.time;
+
+
+  updateUI();
+
+
+  timerInterval=
+    setInterval(()=>{
+
+      timeLeft--;
+
+
+      updateUI();
+
+
+      if(
+        timeLeft<=0
+      ){
+
+        clearInterval(
+          timerInterval
+        );
+
+        timeUp();
+
+      }
+
+    },1000);
+
+}
+
+
+/* =========================
+   時間到
+========================= */
+
+function timeUp(){
+
+  /*
+    時間到後禁止操作
+  */
+
+  lock=true;
+
+
+  showToast(
+    "⏰ TIME UP!"
+  );
+
+
+  setTimeout(()=>{
+
+    document.getElementById(
+      "finalScore"
+    ).textContent=
+      score;
+
+
+    document.getElementById(
+      "resultInfo"
+    ).innerHTML=
+      `
+      時間到！<br>
+      完成 ${matches} /
+      ${currentLevel.pairs} 對<br>
+      步數：${moves}
+      `;
+
+
+    document.getElementById(
+      "modal"
+    ).classList.remove(
+      "hidden"
+    );
+
+
+  },900);
+
+}
+
+
+/* =========================
+   完成
+========================= */
+
+function finish(){
+
+  clearInterval(
+    timerInterval
+  );
+
+
+  lock=true;
+
+
+  finishSound();
+
+
+  /*
+    連續爆閃
+  */
+
+  for(
+    let i=0;
+    i<4;
+    i++
+  ){
+
+    setTimeout(()=>{
+
+
+      const flash=
+        document.createElement(
+          "div"
+        );
+
+      flash.className="flash";
+
+
+      document.body.appendChild(
+        flash
+      );
+
+
+      setTimeout(
+        ()=>{
+          flash.remove();
+        },
+        250
+      );
+
+
+      const matched=
+        document.querySelector(
+          ".card.matched"
+        );
+
+
+      if(matched){
+
+        matchEffect(
+          matched
+        );
+
+      }
+
+
+    },i*180);
+
+  }
+
+
+  /*
+    最高分
+  */
+
+  const key=
+    "memory20_"+
+    getLevelKey();
+
+
+  const best=
+    Number(
+      localStorage.getItem(
+        key
+      ) || 0
+    );
+
+
+  if(
+    score>best
+  ){
+
+    localStorage.setItem(
+      key,
+      score
+    );
+
+  }
+
+
+  setTimeout(()=>{
+
+    document.getElementById(
+      "finalScore"
+    ).textContent=
+      score;
+
+
+    document.getElementById(
+      "resultInfo"
+    ).innerHTML=
+      `
+      🎉 全部配對成功！<br>
+      完成 ${matches} 對<br>
+      步數：${moves}<br>
+      ${
+        timeLeft>0
+        ? "剩餘時間："+formatTime(timeLeft)
+        : "不限時模式"
+      }
+      `;
+
+
+    document.getElementById(
+      "modal"
+    ).classList.remove(
+      "hidden"
+    );
+
+
+  },850);
+
+}
+
+
+/* =========================
+   難度 Key
+========================= */
+
+function getLevelKey(){
+
+  if(
+    currentLevel===
+    levels.easy
+  ){
+    return "easy";
+  }
+
+
+  if(
+    currentLevel===
+    levels.normal
+  ){
+    return "normal";
+  }
+
+
+  if(
+    currentLevel===
+    levels.hard
+  ){
+    return "hard";
+  }
+
+
+  return "pro";
+
+}
+
+
+/* =========================
+   重新開始
+========================= */
+
+function restartGame(){
+
+  clearInterval(
+    timerInterval
+  );
+
+
+  document.getElementById(
+    "modal"
+  ).classList.add(
+    "hidden"
+  );
+
+
+  moves=0;
+
+  matches=0;
+
+  score=0;
+
+  combo=0;
+
+
+  first=null;
+
+  second=null;
+
+  lock=false;
+
+
+  buildCards();
+
+  renderCards();
+
+  startTimer();
+
+  updateUI();
+
+}
+
+
+/* =========================
+   回難度
+========================= */
+
+function chooseLevel(){
+
+  clearInterval(
+    timerInterval
+  );
+
+
+  document.getElementById(
+    "modal"
+  ).classList.add(
+    "hidden"
+  );
+
+
+  document.getElementById(
+    "gameScreen"
+  ).classList.add(
+    "hidden"
+  );
+
+
+  document.getElementById(
+    "selectScreen"
+  ).classList.remove(
+    "hidden"
+  );
+
+
+  first=null;
+
+  second=null;
+
+  lock=false;
+
+}
+
+
+/* =========================
+   Audio 解鎖
+========================= */
+
+document.addEventListener(
+  "pointerdown",
+  ()=>{
+
+    if(
+      audio &&
+      audio.state==="suspended"
+    ){
+
+      audio.resume();
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>
